@@ -33,11 +33,8 @@ socket.addEventListener('message', function (event) {
     console.log("y:" + data.y + " angle:" + data.angle);
     dy = calculate_dy(data.angle + 180);
     dx = calculate_dx(data.angle + 180);
-
     ball_y = (data.y / 1000) * canvas.height;
     ball_x = canvas.width - 10;
-    // dx = -dx;
-    // dy = -dy;
     ballOnOurSide = true;
 });
 
@@ -50,6 +47,7 @@ function sendGameOverMessage() {
 }
 
 function calculate_dy(theta) {
+    theta = theta * (180 / Math.PI);
     return Math.sqrt(
         (dxy * dxy) / ((Math.tan(theta)*Math.tan(theta)) + 1)
     );
