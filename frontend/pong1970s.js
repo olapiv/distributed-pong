@@ -5,12 +5,14 @@ let downPressed = false;
 const ballRadius = 10;
 let ballOnOurSide = false;
 
-const speed = 0.2;
+const speed = 0.15;
 const intervalLength = 30;
 const dxy = speed*intervalLength;
-let theta_start = 45;
-let dy = calculate_dy(theta_start);
-let dx = calculate_dx(theta_start);
+const theta_start = 45;
+let dy // = calculate_dy(theta_start);
+let dx // = calculate_dx(theta_start);
+// console.log("dy: ", dy);
+// console.log("dx: ", dx);
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -29,13 +31,13 @@ const socket = new WebSocket('ws://192.168.0.26:8080');
 socket.addEventListener('message', function (event) {
     data = JSON.parse(event.data);
     console.log("y:" + data.y + " angle:" + data.angle);
-    dy = calculate_dy(-data.angle);
-    dx = calculate_dx(-data.angle);
+    dy = calculate_dy(data.angle + 180);
+    dx = calculate_dx(data.angle + 180);
 
     ball_y = (data.y / 1000) * canvas.height;
     ball_x = canvas.width - 10;
-    dx = -dx;
-    dy = -dy;
+    // dx = -dx;
+    // dy = -dy;
     ballOnOurSide = true;
 });
 
