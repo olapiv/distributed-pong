@@ -46,7 +46,7 @@ function sendGameOverMessage() {
 
 
 function ballEdgeCollisionDetector() {
-    if(ball_x + dx > canvas.width-ballRadius && ballOnOurSide) {
+    if(ball_x + dx > canvas.width-ballRadius) {
         let ball_y_server = (ball_y / canvas.height ) * 1000;
         sendMessage(ball_y_server, 45);
         ballOnOurSide = false;
@@ -74,24 +74,9 @@ function RectCircleColliding() {
     return dx*dx+dy*dy<=(ballRadius*ballRadius);
 }
 function paddleBallCollisionDetector() {
-
     if (RectCircleColliding()) {
         dx = -dx;
     }
-
-    // let x_axis_colliding = (Math.abs(x_paddle - ball_x) < collisionLengthBallBox);
-    // let y_axis_colliding = (Math.abs(y_paddle - ball_y) < collisionLengthBallBox);
-    // if (
-    //     x_axis_colliding
-    //     &&
-    //     y_axis_colliding
-    // ) {
-    //     console.log("x_paddle: ", x_paddle);
-    //     console.log("y_paddle: ", y_paddle);
-    //     console.log("x_axis_colliding: ", x_axis_colliding);
-    //     console.log("y_axis_colliding: ", y_axis_colliding);
-    //     dx = -dx;
-    // }
 }
 
 function drawPaddle() {
@@ -105,7 +90,6 @@ function drawPaddle() {
 function keyDownHandler(e) {
     if(e.key == "Up" || e.key == "ArrowUp") {
         upPressed = true;
-        // console.log("upPressed: ", upPressed);
     }
     else if(e.key == "Down" || e.key == "ArrowDown") {
         downPressed = true;
@@ -123,10 +107,10 @@ function keyUpHandler(e) {
 
 function paddleControls() {    
     if(upPressed) {
-        y_paddle = y_paddle-5;
+        if(y_paddle > 0) y_paddle = y_paddle-5;
     }
     else if(downPressed) {
-        y_paddle = y_paddle+5;
+        if(y_paddle < (canvas.height - paddle_height)) y_paddle = y_paddle+5;
     }
 }
 
@@ -148,20 +132,11 @@ function draw() {
     drawPaddle();
     drawBall();
 
-    // boxBallCollisionDetector();
-    // updateGameStatus();
-    // if (!gameRunning) {
-    //     clearInterval(drawingInterval);
-
-    //     // So collision is shown:
-    //     drawAdventBoxes();
-    //     drawBall();
-    //     return
-    // }
-
     paddleControls();
-    ballEdgeCollisionDetector();
-    paddleBallCollisionDetector();
+    if(ballOnOurSide) {
+        ballEdgeCollisionDetector();
+        paddleBallCollisionDetector();
+    }
     ball_x += dx;
     ball_y += dy;
 }
