@@ -43,8 +43,6 @@ function sendGameOverMessage() {
     socket.send("LOST");
 }
 
-
-
 function ballEdgeCollisionDetector() {
     if(ball_x + dx > canvas.width-ballRadius) {
         let ball_y_server = (ball_y / canvas.height ) * 1000;
@@ -140,5 +138,18 @@ function draw() {
     ball_x += dx;
     ball_y += dy;
 }
+
+function myFunction(event) {
+    let mouseY = event.touches[0].clientY;
+    if(mouseY < 0) {
+        y_paddle = 0;
+    }
+    else if(mouseY > canvas.height - paddle_height) {
+        y_paddle = canvas.height - paddle_height;
+    } 
+    else {
+        y_paddle = mouseY;
+    }
+  }
 
 drawingInterval = setInterval(draw, intervalLength);
