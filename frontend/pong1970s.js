@@ -10,11 +10,12 @@ const intervalLength = 30;
 const dxy = speed*intervalLength;
 let dx = dxy;
 let dy = -dxy;
+let paddleConstant = 5;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-let paddle_height = 40;
+let paddle_height = 60;
 let paddle_width = 10;
 let y_paddle = canvas.height / 2;
 let x_paddle = 30;
@@ -42,8 +43,6 @@ function sendMessage(y, angle) {
 function sendGameOverMessage() {
     socket.send("LOST");
 }
-
-
 
 function ballEdgeCollisionDetector() {
     if(ball_x + dx > canvas.width-ballRadius) {
@@ -107,10 +106,10 @@ function keyUpHandler(e) {
 
 function paddleControls() {    
     if(upPressed) {
-        if(y_paddle > 0) y_paddle = y_paddle-5;
+        if(y_paddle > 0) y_paddle = y_paddle-paddleConstant;
     }
     else if(downPressed) {
-        if(y_paddle < (canvas.height - paddle_height)) y_paddle = y_paddle+5;
+        if(y_paddle < (canvas.height - paddle_height)) y_paddle = y_paddle+paddleConstant;
     }
 }
 
@@ -139,6 +138,9 @@ function draw() {
     }
     ball_x += dx;
     ball_y += dy;
+    dx = dx * 1.0001;
+    dy = dy * 1.0001;
+    paddleConstant = paddleConstant * 1.0001;
 }
 
 drawingInterval = setInterval(draw, intervalLength);
