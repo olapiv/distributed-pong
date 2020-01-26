@@ -8,8 +8,9 @@ let ballOnOurSide = false;
 const speed = 0.2;
 const intervalLength = 30;
 const dxy = speed*intervalLength;
-let dx = dxy;
-let dy = -dxy;
+let theta_start = 45;
+let dy = calculate_dy(theta_start);
+let dx = calculate_dx(theta_start);
 let paddleConstant = 5;
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -29,6 +30,9 @@ const socket = new WebSocket('ws://192.168.0.26:8080');
 socket.addEventListener('message', function (event) {
     data = JSON.parse(event.data);
     console.log("y:" + data.y + " angle:" + data.angle);
+    dy = calculate_dy(-data.angle);
+    dx = calculate_dx(-data.angle);
+
     ball_y = (data.y / 1000) * canvas.height;
     ball_x = canvas.width - 10;
     dx = -dx;
@@ -44,10 +48,24 @@ function sendGameOverMessage() {
     socket.send("LOST");
 }
 
+function calculate_dy(theta) {
+    return Math.sqrt(
+        (dxy * dxy) / ((Math.tan(theta)*Math.tan(theta)) + 1)
+    );
+}
+
+function calculate_dx(theta) {
+    let dy = calculate_dy(theta);
+    return dxy*dxy - dy*dy;
+}
+
+
+
 function ballEdgeCollisionDetector() {
     if(ball_x + dx > canvas.width-ballRadius) {
         let ball_y_server = (ball_y / canvas.height ) * 1000;
-        sendMessage(ball_y_server, 45);
+        let theta = Math.atan(dx/dy);
+        sendMessage(ball_y_server, theta);
         ballOnOurSide = false;
     } else if (ball_x + dx < ballRadius) {
         // sendGameOverMessage();
